@@ -54,18 +54,19 @@ national_sml <- select(national_clean, control, acprimary, acsecndry, yrbuilt, m
 
 # subset just to the california cbsa
 
-# metro
+# metro = San Jose-Sunnyvale-Santa Clara, CA
 metro_sml_ca <- filter(metro_sml, 
                            omb13cbsa == "'41940'")
 
 # national
+  # 31080 = Los Angeles-Long Beach-Anaheim, CA
+  # 40140	= Riverside-San Bernardino-Ontario, CA
+  # 41860	= San Francisco-Oakland-Hayward, CA
 national_sml_ca <- filter(national_sml, 
                                 omb13cbsa == "'31080'" | 
                                 omb13cbsa == "'40140'" | 
                                 omb13cbsa == "'41860'")
 
-# merge national and metro --> not quite working, so I will just work with them separately
-# ahs_17 <- full_join(metro_sml_ca, national_sml_ca, by = 'control')
 
 # figures
 
@@ -82,9 +83,158 @@ ggplot(data = metro_sml_ca, mapping = aes(x = yrbuilt)) +
   geom_histogram(stat="count") +
   theme_minimal()
 
+# these ones is good
+ggplot(data = metro_sml_ca) +
+  geom_count(mapping = aes(x = omb13cbsa, y = acprimary))
+
+ggplot(data = metro_sml_ca) +
+  geom_count(mapping = aes(x = omb13cbsa, y = acsecndry))
+
+ggplot(data = metro_sml_ca) +
+  geom_count(mapping = aes(x = omb13cbsa, y = yrbuilt))
+
+ggplot(data = metro_sml_ca) +
+  geom_count(mapping = aes(x = omb13cbsa, y = multigen))
+
+ggplot(data = metro_sml_ca) +
+  geom_count(mapping = aes(x = omb13cbsa, y = hhrace))
+
+ggplot(data = metro_sml_ca) +
+  geom_count(mapping = aes(x = omb13cbsa, y = hhsex))
+
+ggplot(data = metro_sml_ca) +
+  geom_count(mapping = aes(x = omb13cbsa, y = hholdkids))
+
+
+metro_sml_ca %>% 
+  count(omb13cbsa, acprimary) %>%  
+  ggplot(mapping = aes(x = omb13cbsa, y = acprimary)) +
+  geom_tile(mapping = aes(fill = n))
+
+
+ggplot(metro_sml_ca,aes(x = omb13cbsa,fill = acprimary)) + 
+  geom_bar(position = "fill") +
+  theme_minimal() +
+  xlab("California CBSAs in AHS Metro PUF")
+
 
 # national
-ggplot(data = national_sml_ca) + 
-  geom_point(mapping = aes(x = omb13cbsa, y = acprimary)) + 
-  facet_wrap(~ acprimary, nrow = 3)
+ggplot(data = national_sml_ca) +
+  geom_count(mapping = aes(x = omb13cbsa, y = acprimary))
+
+ggplot(data = national_sml_ca) +
+  geom_count(mapping = aes(x = omb13cbsa, y = acsecndry))
+
+ggplot(data = national_sml_ca) +
+  geom_count(mapping = aes(x = omb13cbsa, y = yrbuilt))
+
+ggplot(data = national_sml_ca) +
+  geom_count(mapping = aes(x = omb13cbsa, y = multigen))
+
+ggplot(data = national_sml_ca) +
+  geom_count(mapping = aes(x = omb13cbsa, y = hhrace))
+
+ggplot(data = national_sml_ca) +
+  geom_count(mapping = aes(x = omb13cbsa, y = hhsex))
+
+ggplot(data = national_sml_ca) +
+  geom_count(mapping = aes(x = omb13cbsa, y = hholdkids))
+
+
+
+national_sml_ca %>% 
+  count(omb13cbsa, acprimary) %>%  
+  ggplot(mapping = aes(x = omb13cbsa, y = acprimary)) +
+  geom_tile(mapping = aes(fill = n)) +
+  theme_minimal() +
+  xlab("California CBSAs in AHS National PUF") + 
+  ylab("Primary Air Conditioning Status and Type")
+
+ggplot(national_sml_ca,aes(x = omb13cbsa,fill = acprimary)) + 
+  geom_bar(position = "fill") +
+  theme_minimal() +
+  xlab("California CBSAs in AHS National PUF")
+
+
+# merge national and metro --> working now!!
+ahs_17 <- full_join(metro_sml_ca, national_sml_ca)
+
+## figures with all four AHS California CBSAs
+
+ggplot(ahs_17,aes(x = omb13cbsa,fill = acprimary)) + 
+  geom_bar(position = "fill") +
+  theme_minimal() +
+  xlab("California CBSAs in AHS National and Metro PUF")
+
+
+
+
+
+
+## acprimary
+  # 1 = electric powered central air conditioner
+  # 2 = piped gas powered central air conditioner
+  # 3 = liquefied petroleum gas powered central air conditioner
+  # 4 = other fuel source powered air conditioner
+  # 5 = 1 room air conditioner
+  # 6 = 2 room air conditioner
+  # 7 = 3 room air conditioner
+  # 8 = 4 room air conditioner
+  # 9 = 5 room air conditioner
+  # 10 = 6 room air conditioner
+  # 11 = 7+ room air conditioner
+  # 12 = no air conditioning
+
+## acsecndry
+  # 1 = secondary electric powered central air conditioner
+  # 2 = secondary piped gas powered central air conditioner
+  # 3 = secondary liquefied petroleum gas powered central air conditioner
+  # 4 = secondary other fuel source powered air conditioner
+  # 5 = secondary 1 room air conditioner
+  # 6 = secondary 2 room air conditioner
+  # 7 = secondary 3 room air conditioner
+  # 8 = secondary 4 room air conditioner
+  # 9 = secondary 5 room air conditioner
+  # 10 = secondary 6 room air conditioner
+  # 11 = secondary 7+ room air conditioner
+  # 12 = secondary no air conditioning
+
+## multigen
+  # 1 = Householder only
+  # 2 = Householder and one younger generation
+  # 3 = Householder and two or more younger generations
+  # 4 = Householder and at least one younger generation, at least one older generation
+  # 5 = Householder and one older generation
+  # 6 = Householder and two or more older generations
+  # N = not applicable
+
+## hhrace
+  # 1	= White only
+  # 2	= Black only
+  # 3	= American Indian, Alaska Native only
+  # 4 =	Asian only
+  # 5	= Hawaiian, Pacific Islander only
+  # 6 =	White / Black
+  # 7	= White / American Indian, Alaska Native
+  # 8 =	White / Asian
+  # 9	= White / Hawaiian, Pacific Islander
+  # 10	= Black / American Indian, Alaska Native
+  # 11	= Black / Asian
+  # 12	= Black / Hawaiian, Pacific Islander
+  # 13	= American Indian, Alaska Native / Asian
+  # 14	= Asian / Hawaiian, Pacific Islander
+  # 15	= White / Black / American Indian, Alaska Native
+  # 16	= White / Black / Asian
+  # 17	= White / American Indian, Alaska Native / Asian
+  # 18	= White / Asian / Hawaiian, Pacific Islander
+  # 19	= White / Black / American Indian, Alaska Native / Asian
+  # 20	= Other combinations of 2 or 3 races
+  # 21	= Other combinations of 4 or more races
+  # N = not applicable
+
+## hhsex
+  # 1 = female
+  # 2 = male
+  # N = not applicable
+
 
