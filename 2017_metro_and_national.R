@@ -69,7 +69,19 @@ national_sml_ca <- filter(national_sml,
 
 # figures
 
-# metro
+# metro (this is only 41940, which is San Jose-Sunnyvale-Santa Clara, CA)
+ggplot(data = metro_sml_ca, mapping = aes(x = acprimary)) +
+  geom_histogram(stat="count") +
+  theme_minimal()
+
+ggplot(data = metro_sml_ca, mapping = aes(x = acsecndry)) +
+  geom_histogram(stat="count") +
+  theme_minimal()
+
+ggplot(data = metro_sml_ca, mapping = aes(x = yrbuilt)) +
+  geom_histogram(stat="count") +
+  theme_minimal()
+
 
 # national
 ggplot(data = national_sml_ca) + 
