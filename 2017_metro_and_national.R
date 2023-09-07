@@ -8,6 +8,7 @@ library(dplyr)
 # install.packages("stringr")
 library(stringr)
 library(ggplot2)
+library(readr)
 
 ##### Load in the data + clean it:
 
@@ -75,6 +76,13 @@ ggplot(data = metro_sml_ca, mapping = aes(x = acprimary)) +
   geom_histogram(stat="count") +
   theme_minimal()
 
+
+## trying out adding in weight to the above plot
+ggplot(data = metro_sml_ca, mapping = aes(x = acprimary, weight = weight)) +
+  geom_histogram(stat="count") +
+  theme_minimal()
+
+
 ggplot(data = metro_sml_ca, mapping = aes(x = acsecndry)) +
   geom_histogram(stat="count") +
   theme_minimal()
@@ -83,7 +91,7 @@ ggplot(data = metro_sml_ca, mapping = aes(x = yrbuilt)) +
   geom_histogram(stat="count") +
   theme_minimal()
 
-# these ones is good
+# these ones are good
 ggplot(data = metro_sml_ca) +
   geom_count(mapping = aes(x = omb13cbsa, y = acprimary))
 
@@ -155,19 +163,47 @@ ggplot(national_sml_ca,aes(x = omb13cbsa,fill = acprimary)) +
   theme_minimal() +
   xlab("California CBSAs in AHS National PUF")
 
+## try the above plot with weights
+ggplot(national_sml_ca,aes(x = omb13cbsa, fill = acprimary, weight = weight)) + 
+  geom_bar(position = "fill") +
+  theme_minimal() +
+  xlab("California CBSAs in AHS National PUF")
+
 
 # merge national and metro --> working now!!
 ahs_17 <- full_join(metro_sml_ca, national_sml_ca)
 
+ahs_17_ca <- ahs_17
+
+# save this merged dataset
+# write_csv(ahs_17_ca, file = '/Users/gabriellebenoit/Documents/GitHub/AHS_HeatHealth/ahs_17_ca.csv')
+
 ## figures with all four AHS California CBSAs
 
-ggplot(ahs_17,aes(x = omb13cbsa,fill = acprimary)) + 
+ggplot(ahs_17,aes(x = omb13cbsa, fill = acprimary)) + 
   geom_bar(position = "fill") +
   theme_minimal() +
   xlab("California CBSAs in AHS National and Metro PUF")
 
+# add in weights
 
+ggplot(ahs_17,aes(x = omb13cbsa, fill = acprimary, weight = weight)) + 
+  geom_bar(position = "fill") +
+  theme_minimal() +
+  ggtitle("California CBSAs in AHS National and Metro PUF (weighted)") +
+  xlab("California CBSAs") +
+  ylab("Count in Each Status Category of Primary Air Conditioning")
 
+ggsave("ac_type_CA_cbsa_ahs_2017.pdf")
+
+ggplot(data = ahs_17_ca, mapping = aes(x = yrbuilt, y = acprimary, colour = omb13cbsa, group = omb13cbsa, weight = weight)) +
+  geom_boxplot() +
+  theme_minimal() +
+  ggtitle("California CBSAs in AHS National and Metro PUF (weighted)") +
+  xlab("Year the home was built") +
+  ylab("Status of Primary Air Conditioning")
+
+ggsave("ac_type_yrbuilt_CA_cbsa_ahs_2017.pdf")
 
 
 
