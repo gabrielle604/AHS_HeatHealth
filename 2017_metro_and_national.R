@@ -9,6 +9,7 @@ library(dplyr)
 library(stringr)
 library(ggplot2)
 library(readr)
+library(scales)
 
 ##### Load in the data + clean it:
 
@@ -187,7 +188,7 @@ ggplot(ahs_17,aes(x = omb13cbsa, fill = acprimary)) +
 
 # add in weights
 
-ggplot(ahs_17,aes(x = omb13cbsa, fill = acprimary, weight = weight)) + 
+ggplot(ahs_17_ca,aes(x = omb13cbsa, fill = acprimary, weight = weight)) + 
   geom_bar(position = "fill") +
   theme_minimal() +
   ggtitle("California CBSAs in AHS National and Metro PUF (weighted)") +
@@ -204,6 +205,73 @@ ggplot(data = ahs_17_ca, mapping = aes(x = yrbuilt, y = acprimary, colour = omb1
   ylab("Status of Primary Air Conditioning")
 
 ggsave("ac_type_yrbuilt_CA_cbsa_ahs_2017.pdf")
+
+# percentages
+
+ggplot(ahs_17_ca,aes(x = omb13cbsa, y = after_stat(count/sum(count)), fill = acprimary, weight = weight)) + 
+  geom_bar(position = "fill") +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::percent) +
+  xlab("California CBSAs in AHS National and Metro PUF (weighted)") +
+  ylab("percentage")
+
+ggsave("ac_type_percentage_CA_cbsa_ahs_2017.pdf")
+
+# frequency (using this video: https://www.youtube.com/watch?v=MHbzCs05Luo)
+# just using cbsa variable
+df <- ahs_17_ca %>% 
+  dplyr::group_by(omb13cbsa) %>% 
+  tally()
+
+df <- df %>% 
+  dplyr::mutate(perc = n/sum(n))
+  
+pl <- ggplot(data = df, aes(x=omb13cbsa, y = perc))
+pl <- pl + geom_bar(stat = "identity", fill = "orange") # stat = "identity" means whatever is the value of y is what is dictating the bars
+pl <- pl + theme_minimal()
+pl <- pl + labs(title = "AHS CA National and Metro CBSAs")
+pl <- pl + labs(subtitle = "Showing ....")
+pl <- pl + labs(caption = paste("Total cbsas", nrow(df)))
+pl <- pl + scale_y_continuous(labels = scales::percent)
+pl <- pl + labs(x = "CBSA", y = "Percent")
+pl
+
+# using cbsa and acprimary
+df <- ahs_17_ca %>% 
+  dplyr::group_by(omb13cbsa, acprimary) %>% 
+  tally()
+
+df <- df %>% 
+  dplyr::mutate(perc = n/sum(n))
+
+pl <- ggplot(data = df, aes(x=acprimary, y = perc))
+pl <- pl + geom_bar(stat = "identity", fill = "orange") # stat = "identity" means whatever is the value of y is what is dictating the bars
+pl <- pl + theme_minimal()
+pl <- pl + labs(title = "AHS CA National and Metro CBSAs")
+pl <- pl + labs(subtitle = "Showing ....")
+pl <- pl + labs(caption = paste("...", nrow(df)))
+pl <- pl + scale_y_continuous(labels = scales::percent)
+pl <- pl + labs(x = "...", y = "Percent")
+pl
+
+# create a data frame with just the 4 california cbsas and those with "no primary air conditioning'
+df <- ahs_17_ca %>% 
+  dplyr::group_by(omb13cbsa, acprimary, weight) %>% 
+  tally()
+
+df <- df %>% 
+  dplyr::mutate(perc = n/sum(n))
+
+df <- df[df$acprimary == "'12'",]
+
+no_ac <- ggplot(data = df,aes(x = acprimary, y = after_stat(count/sum(count)), fill = omb13cbsa, weight = weight)) + 
+  geom_bar(position = "fill") +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::percent) +
+  xlab("No Primary AC in AHS National and Metro PUF (weighted)") +
+  ylab("percentage")
+
+no_ac
 
 
 
