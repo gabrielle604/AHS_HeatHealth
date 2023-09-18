@@ -273,7 +273,25 @@ no_ac <- ggplot(data = df,aes(x = acprimary, y = after_stat(count/sum(count)), f
 
 no_ac
 
+# rename CBSAs in legend
+no_ac <- ggplot(data = df,aes(x = acprimary, y = after_stat(count/sum(count)), fill = omb13cbsa, weight = weight)) + 
+  geom_bar(position = "fill") +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::percent) +
+  xlab("No Primary AC in AHS National and Metro PUF (weighted)") +
+  ylab("percentage") +
+  scale_fill_discrete(name = "CBSA", labels = c("Los Angeles-Long Beach-Anaheim", "Riverside-San Bernardino-Ontario", "San Francisco-Oakland-Hayward", "San Jose-Sunnyvale-Santa Clara"))
 
+no_ac
+
+ggsave("no_ac_percentage_CA_cbsa_ahs_2017.pdf")
+
+
+## california cbsas = 
+  # 31080 = Los Angeles-Long Beach-Anaheim, CA
+  # 40140	= Riverside-San Bernardino-Ontario, CA
+  # 41860	= San Francisco-Oakland-Hayward, CA
+  # 41940 = San Jose-Sunnyvale-Santa Clara, CA
 
 ## acprimary
   # 1 = electric powered central air conditioner
