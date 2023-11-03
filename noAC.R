@@ -48,7 +48,7 @@ ggplot(ahs_17_ca, aes(x=omb13cbsa, y=yrbuilt, fill=omb13cbsa)) + # fill=name all
   ggtitle("California CBSAs in AHS National and Metro PUF (not weighted)") +
   xlab("CA CBSAs") +
   ylab("Year Home was Built")
-# not weighted because when I added in weights, R said it dropped the weight aethetic
+# not weighted because when I added in weights, R said it dropped the weight aesthetic
 ggsave("ac_yrbuilt_CA_cbsa_ahs_2017.pdf")
 
 # multiple histograms
@@ -57,8 +57,6 @@ library(hrbrthemes)
 
 ahs_noAC %>%
   ggplot( aes(x=omb13cbsa, fill=hhrace)) +
-  geom_histogram( color = "hhrace", stat="count") +
+  geom_histogram(stat="count") +
   theme_ipsum() +
   scale_color_viridis()
-
-

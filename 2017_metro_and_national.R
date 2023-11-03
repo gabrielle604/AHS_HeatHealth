@@ -46,19 +46,31 @@ table(national_clean$omb13cbsa)
 # will be named the same as the variable to which it refers but will begin with 
 # the letter J
 
-# subset each dataset to have acprimary, acsecndry, yrbuilt, multigen, hhrace, hhsex, hholdkids, weight, and omb13cbsa
+# subset each dataset 
 
 # metro
 metro_sml <- select(metro_clean, control, acprimary, acsecndry, yrbuilt, multigen, hhrace, hhsex, hholdkids, weight, omb13cbsa)
 
+# new list to select/subset to:
+metro_sml_2 <- select(metro_clean, control, acprimary, acsecndry, yrbuilt, multigen, hhrace, hhsex, 
+                      hholdkids, weight, omb13cbsa, perpovlvl, hincp, condo, hhnatvty, 
+                      hhgrad, fincp, nhqpubtrn, tenure, hhraceas, hhracepi)
 # national
 national_sml <- select(national_clean, control, acprimary, acsecndry, yrbuilt, multigen, hhrace, hhsex, hholdkids, weight, omb13cbsa)
 
+# new list to select/subset to:
+national_sml_2 <- select(national_clean, control, acprimary, acsecndry, yrbuilt, multigen, hhrace, hhsex, 
+                         hholdkids, weight, omb13cbsa, perpovlvl, hincp, condo, hhnatvty, 
+                         hhgrad, fincp, nhqpubtrn, tenure, hhraceas, hhracepi)
 # subset just to the california cbsa
 
 # metro = San Jose-Sunnyvale-Santa Clara, CA
 metro_sml_ca <- filter(metro_sml, 
                            omb13cbsa == "'41940'")
+# [take 2, October] metro = San Jose-Sunnyvale-Santa Clara, CA
+metro_sml_ca_2 <- filter(metro_sml_2, 
+                       omb13cbsa == "'41940'")
+
 
 # national
   # 31080 = Los Angeles-Long Beach-Anaheim, CA
@@ -68,6 +80,14 @@ national_sml_ca <- filter(national_sml,
                                 omb13cbsa == "'31080'" | 
                                 omb13cbsa == "'40140'" | 
                                 omb13cbsa == "'41860'")
+# [take 2, October]national
+  # 31080 = Los Angeles-Long Beach-Anaheim, CA
+  # 40140	= Riverside-San Bernardino-Ontario, CA
+  # 41860	= San Francisco-Oakland-Hayward, CA
+national_sml_ca_2 <- filter(national_sml_2, 
+                          omb13cbsa == "'31080'" | 
+                            omb13cbsa == "'40140'" | 
+                            omb13cbsa == "'41860'")
 
 
 # figures
@@ -176,8 +196,16 @@ ahs_17 <- full_join(metro_sml_ca, national_sml_ca)
 
 ahs_17_ca <- ahs_17
 
+# new merge with more variables in the subset (Oct.31)
+ahs_17_oct <- full_join(metro_sml_ca_2, national_sml_ca_2)
+
+ahs_17_ca_oct <- ahs_17_oct
+
 # save this merged dataset
 # write_csv(ahs_17_ca, file = '/Users/gabriellebenoit/Documents/GitHub/AHS_HeatHealth/ahs_17_ca.csv')
+
+# save this NEW OCT. merged dataset
+# write_csv(ahs_17_ca_oct, file = '/Users/gabriellebenoit/Documents/GitHub/AHS_HeatHealth/ahs_17_ca_oct.csv')
 
 ## figures with all four AHS California CBSAs
 
@@ -352,7 +380,7 @@ ggsave("no_ac_percentage_CA_cbsa_ahs_2017.pdf")
   # 19	= White / Black / American Indian, Alaska Native / Asian
   # 20	= Other combinations of 2 or 3 races
   # 21	= Other combinations of 4 or more races
-  # N = not applicable
+  # N or -6. = not applicable
 
 ## hhsex
   # 1 = female
