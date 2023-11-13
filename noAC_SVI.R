@@ -40,23 +40,12 @@ write_csv(ahs_noAC, file = '/Users/gabriellebenoit/Documents/GitHub/AHS_HeatHeal
 # 41860	= San Francisco-Oakland-Hayward, CA
 # 41940 = San Jose-Sunnyvale-Santa Clara, CA
 
-# household race and CBSAs with no AC
-p_dodged <- ggplot(ahs_noAC, aes(x = hhrace, fill = omb13cbsa)) +
-  geom_bar(position = "dodge") +
-  scale_fill_manual(values = c("skyblue", "seagreen", "blue", "violet")) +
-  labs(x = "HH Race", y = "Count", fill = "CA CBSA") +
-  theme(
-    axis.text.x = element_text(size = 20),
-    axis.text.y = element_text(size = 20),
-    axis.title = element_text(size=20,face="bold")) +
-  scale_fill_discrete(name = "CBSA", labels = c("Los Angeles-Long Beach-Anaheim", "Riverside-San Bernardino-Ontario", "San Francisco-Oakland-Hayward", "San Jose-Sunnyvale-Santa Clara"))
-p_dodged
-
 # poverty ["Household income as percent of poverty threshold (rounded)"]
 p_boxplot <- ggplot(ahs_noAC, aes(x = perpovlvl, fill = omb13cbsa)) + 
   geom_boxplot(lower=25, middle=50, upper=75, outlier.size = 2.5) + # these arguments control your quantiles and tell you how large to plot the outliers!
   labs(x = "Poverty Level") +
-  scale_fill_discrete(name = "CBSA", labels = c("Los Angeles-Long Beach-Anaheim", "Riverside-San Bernardino-Ontario", "San Francisco-Oakland-Hayward", "San Jose-Sunnyvale-Santa Clara"))
+  scale_fill_discrete(name = "CBSA", labels = c("Los Angeles-Long Beach-Anaheim", "Riverside-San Bernardino-Ontario", "San Francisco-Oakland-Hayward", "San Jose-Sunnyvale-Santa Clara")) +
+  ggtitle("Household income as % of poverty threshold in households with no AC in CA CBSAs ")
 p_boxplot
 
 # housing age
@@ -74,7 +63,8 @@ p_dodged
 p_boxplot <- ggplot(ahs_noAC, aes(x = yrbuilt, fill = omb13cbsa)) + 
   geom_boxplot(lower=25, middle=50, upper=75, outlier.size = 2.5) + # these arguments control your quantiles and tell you how large to plot the outliers!
   labs(x = "Year Built") +
-  scale_fill_discrete(name = "CBSA", labels = c("Los Angeles-Long Beach-Anaheim", "Riverside-San Bernardino-Ontario", "San Francisco-Oakland-Hayward", "San Jose-Sunnyvale-Santa Clara"))
+  scale_fill_discrete(name = "CBSA", labels = c("Los Angeles-Long Beach-Anaheim", "Riverside-San Bernardino-Ontario", "San Francisco-Oakland-Hayward", "San Jose-Sunnyvale-Santa Clara")) +
+  ggtitle("Year Built of homes with no AC in CA CBSAs")
 p_boxplot
 
 
@@ -106,4 +96,18 @@ mosaicplot(mosaic_data,
            main = "Mosaic Plot of Education Level of Householder and No Air Conditioning By CA CBSA", 
            color = c("lightblue", "lightgreen", "lightcoral", "lightyellow", "lightpink", "lightgray"))
 
+# household race and CBSAs with no AC
+p_dodged <- ggplot(ahs_noAC, aes(x = hhrace, fill = omb13cbsa)) +
+  geom_bar(position = "dodge") +
+  scale_fill_manual(values = c("skyblue", "seagreen", "blue", "violet")) +
+  labs(x = "HH Race", y = "Count", fill = "CA CBSA") +
+  theme(
+    axis.text.x = element_text(size = 20),
+    axis.text.y = element_text(size = 20),
+    axis.title = element_text(size=20,face="bold")) +
+  scale_fill_discrete(name = "CBSA", labels = c("Los Angeles-Long Beach-Anaheim", "Riverside-San Bernardino-Ontario", "San Francisco-Oakland-Hayward", "San Jose-Sunnyvale-Santa Clara"))
+p_dodged
+
+# not helpful at all - majority are listed as not listed/unknown
+table(ahs_noAC$hhracepi)
 
